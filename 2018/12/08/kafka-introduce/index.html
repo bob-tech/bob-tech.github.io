@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="记录一些工作中遇到了技术使用"><title>Kafka的基本介绍 | 奔跑的蜗牛</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.3.1/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Kafka的基本介绍</h1><a id="logo" href="/.">奔跑的蜗牛</a><p class="description">Bob的技术人生</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Kafka的基本介绍</h1><div class="post-meta">Dec 8, 2018<span> | </span><span class="category"><a href="/categories/programming/">编程</a></span></div><div class="post-content"><ul>
+<li><h5 id="Kafka是分布式发布-订阅消息系统。"><a href="#Kafka是分布式发布-订阅消息系统。" class="headerlink" title="Kafka是分布式发布-订阅消息系统。"></a>Kafka是分布式发布-订阅消息系统。</h5></li>
+<li><h5 id="Kafka的两个作用："><a href="#Kafka的两个作用：" class="headerlink" title="Kafka的两个作用："></a>Kafka的两个作用：</h5><ul>
+<li>降低系统组网复杂度。</li>
+<li>降低编程复杂度，各个子系统不在是相互协商接口，各个子系统类似插口插在插座上，Kafka承担高速数据总线的作用。</li>
+</ul>
+</li>
+<li><h5 id="Kafka主要特点："><a href="#Kafka主要特点：" class="headerlink" title="Kafka主要特点："></a>Kafka主要特点：</h5><ul>
+<li><p>同时为发布和订阅提供高吞吐量。据了解，Kafka每秒可以生产约25万消息（50 MB），每秒处理55万消息（110 MB）。</p>
+</li>
+<li><p>可进行持久化操作。将消息持久化到磁盘，因此可用于批量消费，例如ETL，以及实时应用程序。通过将数据持久化到硬盘以及replication防止数据丢失。</p>
+</li>
+<li><p>分布式系统，易于向外扩展。所有的producer、broker和consumer都会有多个，均为分布式的。无需停机即可扩展机器。</p>
+</li>
+<li><p>消息被处理的状态是在consumer端维护，而不是由server端维护。当失败时能自动平衡。</p>
+</li>
+<li><p>支持online和offline的场景。</p>
+</li>
+</ul>
+</li>
+<li><h5 id="Kafka的架构："><a href="#Kafka的架构：" class="headerlink" title="Kafka的架构："></a>Kafka的架构：</h5><p><img src="/2018/12/08/kafka-introduce/images/975609a391574a15645c2d2e2494114f.png" alt="Kafka的架构图"></p>
+</li>
+</ul>
+<p>Kafka的整体架构非常简单，是显式分布式架构，producer、broker（kafka）和consumer都可以有多个。Producer，consumer实现Kafka注册的接口，数据从producer发送到broker，broker承担一个中间缓存和分发的作用。broker分发注册到系统中的consumer。broker的作用类似于缓存，即活跃的数据和离线处理系统之间的缓存。客户端和服务器端的通信，是基于简单，高性能，且与编程语言无关的TCP协议。几个基本概念：</p>
+<ol>
+<li><p>Topic：特指Kafka处理的消息源（feeds of messages）的不同分类。</p>
+</li>
+<li><p>Partition：Topic物理上的分组，一个topic可以分为多个partition，每个partition是一个有序的队列。partition中的每条消息都会被分配一个有序的id（offset）。</p>
+</li>
+<li><p>Message：消息，是通信的基本单位，每个producer可以向一个topic（主题）发布一些消息。</p>
+</li>
+<li><p>Producers：消息和数据生产者，向Kafka的一个topic发布消息的过程叫做producers。</p>
+</li>
+<li><p>Consumers：消息和数据消费者，订阅topics并处理其发布的消息的过程叫做consumers。</p>
+</li>
+<li><p>Broker：缓存代理，Kafka集群中的一台或多台服务器统称为broker。</p>
+</li>
+</ol>
+<ul>
+<li><h5 id="消息发送的流程："><a href="#消息发送的流程：" class="headerlink" title="消息发送的流程："></a>消息发送的流程：</h5><p><img src="/2018/12/08/kafka-introduce/images/cb5892023c894331a55de5ac7f64582d.png" alt="消息发送的流程图"></p>
+</li>
+</ul>
+<ol>
+<li>Producer根据指定的partition方法（round-robin、hash等），将消息发布到指定topic的partition里面</li>
+<li>kafka集群接收到Producer发过来的消息后，将其持久化到硬盘，并保留消息指定时长（可配置），而不关注消息是否被消费。</li>
+<li>Consumer从kafka集群pull数据，并控制获取消息的offset</li>
+</ol>
+<p>PS:本文来自Blog中的部分内容:<a href="https://www.cnblogs.com/yepei/p/6197236.html" target="_blank" rel="noopener">https://www.cnblogs.com/yepei/p/6197236.html</a></p>
+</div><div class="tags"><a href="/tags/kafka/">kafka</a></div><div class="post-nav"><a class="next" href="/2018/12/08/spring-kafka/">spring-kafka的示例</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/life/">生活</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/programming/">编程</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/easyPOI/" style="font-size: 15px;">easyPOI</a> <a href="/tags/kafka/" style="font-size: 15px;">kafka</a> <a href="/tags/logback/" style="font-size: 15px;">logback</a> <a href="/tags/Mybatis/" style="font-size: 15px;">Mybatis</a> <a href="/tags/Spring-boot/" style="font-size: 15px;">Spring boot</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/12/08/kafka-introduce/">Kafka的基本介绍</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/08/spring-kafka/">spring-kafka的示例</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/06/logback-template/">logback-template</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/05/spring-boot-mybatis-datasource/">spring boot 集成mybatis-plus，自定义数据源</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/04/Java-lambda02/">Java lambda 方法使用(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/03/Java-lambda01/">Java lambda 方法使用(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/02/easypoi-export/">easy poi导出多sheet</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/01/startFlag/">开始征程</a></li></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">奔跑的蜗牛.</a> Powered by Bob.</div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.2/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.2/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
