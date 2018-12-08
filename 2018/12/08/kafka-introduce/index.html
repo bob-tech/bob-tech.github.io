@@ -18,7 +18,7 @@
 </li>
 </ul>
 </li>
-<li><h5 id="Kafka的架构："><a href="#Kafka的架构：" class="headerlink" title="Kafka的架构："></a>Kafka的架构：</h5><p><img src="/2018/12/08/kafka-introduce/images/975609a391574a15645c2d2e2494114f.png" alt="Kafka的架构图"></p>
+<li><h5 id="Kafka的架构："><a href="#Kafka的架构：" class="headerlink" title="Kafka的架构："></a>Kafka的架构：</h5><p><img src="/2018/12/08/kafka-introduce/975609a391574a15645c2d2e2494114f.png" alt="Kafka的架构图"></p>
 </li>
 </ul>
 <p>Kafka的整体架构非常简单，是显式分布式架构，producer、broker（kafka）和consumer都可以有多个。Producer，consumer实现Kafka注册的接口，数据从producer发送到broker，broker承担一个中间缓存和分发的作用。broker分发注册到系统中的consumer。broker的作用类似于缓存，即活跃的数据和离线处理系统之间的缓存。客户端和服务器端的通信，是基于简单，高性能，且与编程语言无关的TCP协议。几个基本概念：</p>
@@ -37,7 +37,7 @@
 </li>
 </ol>
 <ul>
-<li><h5 id="消息发送的流程："><a href="#消息发送的流程：" class="headerlink" title="消息发送的流程："></a>消息发送的流程：</h5><p><img src="/2018/12/08/kafka-introduce/images/cb5892023c894331a55de5ac7f64582d.png" alt="消息发送的流程图"></p>
+<li><h5 id="消息发送的流程："><a href="#消息发送的流程：" class="headerlink" title="消息发送的流程："></a>消息发送的流程：</h5><p><img src="/2018/12/08/kafka-introduce/cb5892023c894331a55de5ac7f64582d.png" alt="消息发送的流程图"></p>
 </li>
 </ul>
 <ol>
