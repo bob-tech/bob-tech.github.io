@@ -3,6 +3,31 @@
   
     
     <entry>
+      <title>guava 本地缓存使用</title>
+      <link href="/2018/12/10/guava-cache/"/>
+      <url>/2018/12/10/guava-cache/</url>
+      
+        <content type="html"><![CDATA[<p>缓存是在实际开发中不可缺少的一部分，guava cache是一个优秀的本地缓存实现，为了限制内存占用，通常都设定为自动回收元素。在某些场景下，尽管LoadingCache不回收元素，它也是很有用的，因为它会自动加载缓存。</p><ul><li><p>你愿意消耗一些内存空间来提升速度。</p></li><li><p>你预料到某些键会被查询一次以上。</p></li><li>缓存中存放的数据总量不会超出内存容量。（Guava Cache是单个应用运行时的本地缓存。它不把数据存放到文件或外部服务器。）</li></ul><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">// 定义一个本地缓存</span><br><span class="line">ListeningExecutorService refreshPools = MoreExecutors</span><br><span class="line">.listeningDecorator(Executors.newFixedThreadPool(RELOAD_CACHE_THREADS));</span><br><span class="line"></span><br><span class="line">LoadingCache&lt;String, Map&lt;String, WordSplit&gt;&gt; cache = CacheBuilder.newBuilder()</span><br><span class="line">.refreshAfterWrite(30, TimeUnit.MINUTES).expireAfterAccess(1, TimeUnit.HOURS).maximumSize(50)</span><br><span class="line">.build(new CacheLoader&lt;String, Map&lt;String, WordSplit&gt;&gt;() &#123;</span><br><span class="line">@Override</span><br><span class="line">// 当本地缓存命没有中时，调用load方法获取结果并将结果缓存</span><br><span class="line">public Map&lt;String, WordSplit&gt; load(String key) &#123;</span><br><span class="line">LOG.info(&quot;开始从redis读取缓存到本地&quot;);</span><br><span class="line">Map&lt;String, WordSplit&gt; data = redisOper.scanOneMap(key);</span><br><span class="line">if (data == null || data.isEmpty()) &#123;</span><br><span class="line">String[] keys = key.replace(REDIS_DICT_WORD_PREFIX, &quot;&quot;).split(&quot;~&quot;);</span><br><span class="line">data = splitDict(keys[0], keys[1], keys[2]);</span><br><span class="line">redisOper.setMap(key, data);</span><br><span class="line">LOG.info(&quot;触发本地缓存还原redis远程数据&quot;);</span><br><span class="line">&#125;</span><br><span class="line">return data;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 刷新</span><br><span class="line">@Override</span><br><span class="line">public ListenableFuture&lt;Map&lt;String, WordSplit&gt;&gt; reload(String key, Map&lt;String, WordSplit&gt; oldValue)</span><br><span class="line">throws Exception &#123;</span><br><span class="line">LOG.info(&quot;刷新redis读取缓存到本地&quot;);</span><br><span class="line">return refreshPools.submit(new Callable&lt;Map&lt;String, WordSplit&gt;&gt;() &#123;</span><br><span class="line">@Override</span><br><span class="line">public Map&lt;String, WordSplit&gt; call() throws Exception &#123;</span><br><span class="line">Map&lt;String, WordSplit&gt; data = redisOper.scanOneMap(key);</span><br><span class="line">if (data == null || data.isEmpty()) &#123;</span><br><span class="line">String[] keys = key.replace(REDIS_DICT_WORD_PREFIX, &quot;&quot;).split(&quot;~&quot;);</span><br><span class="line">data = splitDict(keys[0], keys[1], keys[2]);</span><br><span class="line">redisOper.setMap(key, data);</span><br><span class="line">LOG.info(&quot;触发本地缓存还原redis远程数据&quot;);</span><br><span class="line">&#125;</span><br><span class="line">return data;</span><br><span class="line">&#125;</span><br><span class="line">&#125;);</span><br><span class="line">&#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 编程 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> guava </tag>
+            
+            <tag> cache </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>Kafka的基本介绍</title>
       <link href="/2018/12/08/kafka-introduce/"/>
       <url>/2018/12/08/kafka-introduce/</url>
